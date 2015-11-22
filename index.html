@@ -6,11 +6,8 @@
 <script src="lib/jsLouvain.js" type="text/JavaScript"></script>
 </head>
 <style>
-  svg {
-    height: 760px;
-    width: 1420px;
-    border: 1px solid gray;
-  }
+  body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+  svg { width: 100%; height: 100%; }
 </style>
 <body>
 
@@ -80,7 +77,8 @@ function createForceNetwork(nodes, edges) {
 
 //create a network from an edgelist
 
-var colors = d3.scale.ordinal().domain([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]).range(["#996666", "#66CCCC", "#FFFF99", "#CC9999", "#666633", "#993300", "#999966", "#660000", "#996699", "#cc6633", "#ff9966", "#339999", "#6699cc", "#ffcc66", "#ff6600", "#00ccccc"]);
+//var colors = d3.scale.ordinal().domain([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]).range(["#996666", "#66CCCC", "#FFFF99", "#CC9999", "#666633", "#993300", "#999966", "#660000", "#996699", "#cc6633", "#ff9966", "#339999", "#6699cc", "#ffcc66", "#ff6600", "#00ccccc"]);
+var colors = d3.scale.category20();
 
 var node_data = nodes.map(function (d) {return d.id});
 var edge_data = edges.map(function (d) {return {source: d.source.id, target: d.target.id, weight: 1}; });
@@ -101,9 +99,11 @@ nodes.forEach(function (node) {
 modularityCensus(nodes, edges, result);
 
 var force = d3.layout.force().nodes(nodes).links(edges)
-  .size([500,500])
+  .size([1600, 1000])
   .charge(-300)
   .chargeDistance(100)
+  .linkStrength(2)
+  .linkDistance(3)
   .gravity(0.05)
   .on("tick", updateNetwork);
 
@@ -120,8 +120,8 @@ var drag = force.drag()
 
   edgeEnter
   .append("line")
-  .style("stroke-width", function (d) {return d.border ? "3px" : "1px"})
-  .style("stroke", "black")
+  .style("stroke-width", "1px")
+  .style("stroke", "gray")
   .style("pointer-events", "none");
 
   var nodeEnter = d3.select("svg.main").selectAll("g.node")
@@ -131,18 +131,17 @@ var drag = force.drag()
   .attr("class", "node")
   .call(drag);
 
- nodeEnter.append("circle")
-  .attr("r", 16)
-  .attr("class", "background")
-  .style("fill", "lightgreen")
-  .style("opacity", 0)
-  .style("pointer-events", "none");
+// nodeEnter.append("circle")
+//  .attr("r", 16)
+//  .attr("class", "background")
+//  .style("fill", "lightgreen")
+//  .style("opacity", 0)
+//  .style("pointer-events", "none");
 
   nodeEnter.append("circle")
-  .attr("r", 8)
+  .attr("r", 3)
   .attr("class", "foreground")
   .style("fill", function (d) {return colors(d.module)})
-  .style("stroke", "black")
   .style("stroke-width", function (d) {return d.border ? "3px" : "1px"})
 
 /*
